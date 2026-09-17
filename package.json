@@ -1,0 +1,30 @@
+{
+  "name": "paystub-check",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "100% local-first legal analyzer for pay stubs, offer letters, FLSA exemption compliance, and state wage-and-hour laws.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "record:demo": "bash scripts/record-demo.sh"
+  },
+  "dependencies": {
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tesseract.js": "^5.0.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.35",
+    "playwright": "^1.42.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.6"
+  }
+}
