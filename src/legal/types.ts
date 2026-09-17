@@ -1,4 +1,4 @@
-export type SeverityLevel = 'unlawful' | 'misclassification' | 'caution' | 'compliant';
+export type SeverityLevel = "unlawful" | "misclassification" | "caution" | "compliant";
 
 export interface WageRedFlag {
   id: string;
@@ -8,7 +8,7 @@ export interface WageRedFlag {
   statute: string;
   lawName: string;
   explanation: string;
-  enforceability: 'Statutory Violation (Illegal)' | 'High Misclassification Risk' | 'Verification Needed';
+  enforceability: "Statutory Violation (Illegal)" | "High Misclassification Risk" | "Verification Needed";
   workerAdvice: string;
 }
 
@@ -25,6 +25,7 @@ export interface StateWageRule {
   stateName: string;
   statuteRef: string;
   minimumWageRate: number;
+  exemptionSalaryThreshold?: number; // Annual salary threshold for overtime exemption under state law
   dailyOvertimeThreshold?: number; // e.g. 8 hrs in CA, NV, AK
   doubleTimeThreshold?: number; // e.g. 12 hrs in CA
   weeklyOvertimeThreshold: number; // 40 hrs standard
@@ -36,24 +37,25 @@ export interface StateWageRule {
 }
 
 export interface LegalAnalysisResult {
-  documentType: 'Pay Stub' | 'Offer Letter / Contract' | 'Wage Statement';
+  documentType: "Pay Stub" | "Offer Letter / Contract" | "Wage Statement";
   stateCode: string;
   complianceScore: number; // 0 - 100
   summary: string;
-  classificationType: 'Hourly Non-Exempt' | 'Salaried Exempt' | 'Salaried Non-Exempt (Misclassified)' | 'Contractor / 1099';
+  classificationType: "Hourly Non-Exempt" | "Salaried Exempt" | "Salaried Non-Exempt (Misclassified)" | "Contractor / 1099";
   extractedPay: {
     grossPay: number;
     netPay: number;
     hourlyRate?: number;
     hoursWorked?: number;
     overtimeHours?: number;
-    payFrequency: 'Weekly' | 'Bi-Weekly' | 'Semi-Monthly' | 'Monthly' | 'Annual Salary';
+    payFrequency: "Daily" | "Weekly" | "Bi-Weekly" | "Semi-Monthly" | "Monthly" | "Annual Salary";
     calculatedAnnualSalary: number;
   };
   redFlags: WageRedFlag[];
   deductionsList: DeductionLineItem[];
   flsaCompliance: {
     isExemptThresholdMet: boolean;
+    applicableSalaryThreshold: number;
     hasOvertimeViolation: boolean;
     hasIllegalShortageDeduction: boolean;
     hasFicaMathMismatch: boolean;
@@ -82,5 +84,5 @@ export interface DemandLetterData {
   stateCode: string;
   unpaidOvertimeAmount: string;
   unlawfulDeductionAmount: string;
-  demandedRemedy: 'Full Back Pay + 100% Liquidated Damages' | 'Reimbursement of Illegal Deductions' | 'Reclassification to Non-Exempt + Overtime';
+  demandedRemedy: "Full Back Pay + 100% Liquidated Damages" | "Reimbursement of Illegal Deductions" | "Reclassification to Non-Exempt + Overtime";
 }

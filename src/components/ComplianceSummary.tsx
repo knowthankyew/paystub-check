@@ -164,9 +164,11 @@ export const ComplianceSummary: React.FC<ComplianceSummaryProps> = ({ result }) 
             <XCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
           )}
           <div>
-            <div className="text-xs font-semibold text-slate-200">Exemption Salary Basis</div>
+            <div className="text-xs font-semibold text-slate-200">Exemption Salary Basis ({stateRuleInfo.stateCode})</div>
             <div className="text-[11px] text-slate-400">
-              {flsaCompliance.isExemptThresholdMet ? 'Exceeds $43,888/yr Threshold' : 'Under $43,888 FLSA Threshold'}
+              {flsaCompliance.isExemptThresholdMet
+                ? `Meets $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`
+                : `Under $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`}
             </div>
           </div>
         </div>

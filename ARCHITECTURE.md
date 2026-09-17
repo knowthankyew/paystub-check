@@ -47,7 +47,7 @@
 ### 3.1 Legal Rules & Wage Engine (`src/legal/`)
 
 1. **`flsa.ts`**:
-   - **29 U.S.C. § 213(a)(1) (FLSA Exemption Salary Thresholds)**: Salary basis tests for Executive, Administrative, Professional, Computer, and Outside Sales exemptions (DOL 2024 salary threshold $43,888 / $844/wk & $58,656 / $1,128/wk rules). Flags salaried non-exempt employees paid under threshold without overtime.
+   - **29 U.S.C. § 213(a)(1) (FLSA Exemption Salary Thresholds)**: Salary basis tests for Executive, Administrative, Professional, Computer, and Outside Sales exemptions (binding federal FLSA baseline $35,568 / $684/wk following nationwide vacatur of 2024 rule, plus higher state mandates like CA $66,560, WA $67,725, NY $62,400). Flags salaried non-exempt employees paid under threshold without overtime.
    - **29 C.F.R. § 531.35 (Unlawful Deductions & Kickbacks)**: Flags illegal deductions for cash register shortages, stolen items, uniform costs, tool fees, or damaged equipment if they reduce net pay below minimum wage or cut into overtime.
    - **26 U.S.C. §§ 3101-3128 (Statutory Taxes & FICA)**: Verifies FICA Social Security (6.2% up to wage cap), Medicare (1.45% + 0.9% Additional Medicare tax), and state statutory disability/family leave deductions (CA SDI, NY DBL/PFL, MA PFML, NJ FLI, WA PFML).
    - **29 U.S.C. § 207 (Overtime Math)**: Regular rate of pay math rules and 1.5x overtime requirements after 40 hours/week.

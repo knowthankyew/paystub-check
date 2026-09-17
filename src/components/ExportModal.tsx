@@ -51,7 +51,12 @@ ${analysis.redFlags.map((rf, idx) => `
 ## FLSA Compliance Checklist
 - **29 U.S.C. § 207 Overtime**: ${analysis.flsaCompliance.hasOvertimeViolation ? 'NON-COMPLIANT (Overtime multiplier missing)' : 'COMPLIANT'}
 - **29 C.F.R. § 531.35 Deductions**: ${analysis.flsaCompliance.hasIllegalShortageDeduction ? 'NON-COMPLIANT (Unlawful till/uniform deduction found)' : 'COMPLIANT'}
-- **29 U.S.C. § 213 Exemption Salary Threshold**: ${analysis.flsaCompliance.isExemptThresholdMet ? 'EXCEEDS $43,888/yr threshold' : 'BELOW $43,888/yr FLSA threshold'}
+- **Salary Basis Exemption Threshold**: ${analysis.flsaCompliance.isExemptThresholdMet ? `EXCEEDS $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})` : `BELOW $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})`}
+
+---
+
+## Educational & Legal Disclaimer
+*PaystubCheck is an automated informational and educational tool built as a local-first public good. It is not an attorney, law firm, or substitute for professional legal counsel. Use of this document does not establish an attorney-client relationship. Generated dispute letters, tax checks, and wage breakdowns are self-help reference templates intended for worker education. Labor laws vary by jurisdiction and factual circumstance.*
 
 ---
 *Generated 100% locally with PaystubCheck (MIT Public Good - Knowthankyew Privacy Architecture).*

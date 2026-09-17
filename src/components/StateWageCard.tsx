@@ -31,7 +31,7 @@ export const StateWageCard: React.FC<StateWageCardProps> = ({ stateRule }) => {
       </div>
 
       {/* Statutory Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">State Minimum Wage</div>
@@ -42,12 +42,20 @@ export const StateWageCard: React.FC<StateWageCardProps> = ({ stateRule }) => {
         </div>
 
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+          <div className="text-xs text-slate-400 font-medium">Exempt Salary Basis</div>
+          <div className="text-lg font-bold text-amber-400 mt-1">
+            ${stateRule.exemptionSalaryThreshold ? stateRule.exemptionSalaryThreshold.toLocaleString() : "35,568"}/yr
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1">Required to qualify for overtime exemption</p>
+        </div>
+
+        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">Daily Overtime Rule</div>
           <div className="text-lg font-bold text-slate-100 mt-1">
             {stateRule.dailyOvertimeThreshold ? `${stateRule.dailyOvertimeThreshold} Hours/Day` : 'No Daily OT'}
           </div>
           <p className="text-[11px] text-slate-400 mt-1">
-            {stateRule.dailyOvertimeThreshold ? '1.5x after 8 hours worked in a day' : 'Standard 40-hour weekly rule'}
+            {stateRule.dailyOvertimeThreshold ? `1.5x after ${stateRule.dailyOvertimeThreshold} hours in a day` : 'Standard 40-hour weekly rule'}
           </p>
         </div>
 
