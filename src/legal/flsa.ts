@@ -47,7 +47,7 @@ export const FLSA_RULES: FLSARule[] = [
     severity: "misclassification",
     statute: "29 U.S.C. § 213(a)(1), 29 C.F.R. Part 541, & State Overtime Statutes",
     lawName: "FLSA Executive/Admin Exemption Salary Basis Rule",
-    explanation: "Simply paying an employee a salary does NOT make them exempt from overtime. To be exempt, an employee must earn at least the governing statutory threshold (binding federal floor is $684/wk or $35,568/yr following the nationwide vacatur of the 2024 rule, with higher state thresholds like CA $70,304, WA $71,261, or NY $66,300 downstate taking precedence) AND perform bona fide executive, administrative, or professional duties.",
+    explanation: "Simply paying an employee a salary does NOT make them exempt from overtime. To be exempt, an employee must earn at least the governing statutory threshold (binding federal floor is $684/wk or $35,568/yr following the nationwide vacatur of the 2024 rule, with higher state thresholds like CA $70,304, WA $80,168, or NY $66,300 downstate taking precedence) AND perform bona fide executive, administrative, or professional duties.",
     enforceability: "High Misclassification Risk",
     workerAdvice: "If your salary falls below the applicable state or federal exemption threshold, or if your primary duties are non-managerial, you are statutorily non-exempt and entitled to 1.5x overtime for all hours worked over 40 in a workweek."
   },

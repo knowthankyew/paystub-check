@@ -60,10 +60,10 @@ describe('State Wage Laws (2026 Statutory Benchmarks)', () => {
       expect(wa.minimumWageRate).toBe(17.13);
     });
 
-    it('enforces 2026 Washington exempt salary threshold of $71,261/yr ($1,370.40/wk)', () => {
-      expect(wa.exemptionSalaryThreshold).toBe(71261);
-      // 2.0x min wage * 2080 hrs under WAC 296-128-545
-      expect(Math.round(wa.minimumWageRate * 2.0 * 2080)).toBe(71261);
+    it('enforces 2026 Washington exempt salary threshold of $80,168.40/yr ($1,541.70/wk)', () => {
+      expect(wa.exemptionSalaryThreshold).toBeCloseTo(80168.40, 2);
+      // 2.25x min wage * 2080 hrs under WAC 296-128-545
+      expect(wa.minimumWageRate * 2.25 * 2080).toBeCloseTo(80168.40, 2);
     });
   });
 });

@@ -22,7 +22,7 @@
 
 Paste a pay stub, offer letter, or upload a photo/scan of a physical pay advice to receive:
 1. **Wage & Hour Reality Rating (0–100)**: Visual gauge evaluating payroll lawfulness and statutory compliance.
-2. **FLSA Overtime & Exemption Audit**: Identifies misclassified "salaried exempt" employees paid below governing statutory salary thresholds (including California $70,304/yr, Washington $71,261/yr, New York $66,300/yr downstate, and the binding federal FLSA floor of $35,568/yr under **29 U.S.C. § 213(a)(1)**) who are statutorily entitled to 1.5x overtime.
+2. **FLSA Overtime & Exemption Audit**: Identifies misclassified "salaried exempt" employees paid below governing statutory salary thresholds (including California $70,304/yr, Washington $80,168/yr, New York $66,300/yr downstate, and the binding federal FLSA floor of $35,568/yr under **29 U.S.C. § 213(a)(1)**) who are statutorily entitled to 1.5x overtime.
 3. **Unlawful Deductions Check**: Flags illegal deductions for cash register shortages, uniform charges, tool fees, or damaged equipment under **29 C.F.R. § 531.35** ("Free and Clear" payment rule).
 4. **50-State Wage & Hour Protections**: Dynamic statutory guidance based on state jurisdiction—including 8-hour daily overtime rules (CA, NV, AK), waiting time penalties (e.g. California Lab. Code § 203), and mandatory treble damages (Massachusetts M.G.L. c. 149 §§ 148, 150).
 5. **Statutory Wage Demand Letter Generator**: Prefills a formal wage claim demand letter citing **29 U.S.C. § 216(b)** (100% liquidated double damages + mandatory attorney fees) with 1-click copying and print-to-PDF formatting.

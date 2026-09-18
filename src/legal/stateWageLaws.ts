@@ -63,14 +63,14 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateName: "Washington",
     statuteRef: "RCW 49.46 (Minimum Wage Act), RCW 49.52, & WAC 296-128-545",
     minimumWageRate: 17.13,
-    exemptionSalaryThreshold: 71261, // 2x state minimum wage ($71,260.80/yr)
+    exemptionSalaryThreshold: 80168.40, // 2.25x state minimum wage ($80,168.40/yr or $1,541.70/wk)
     weeklyOvertimeThreshold: 40,
     hasStateDisabilityTax: true,
     stateTaxName: "WA PFML & WA Cares Fund",
     statutoryDamagesMultiplier: "Double Damages (2x)",
     specialRules: [
       "Washington state minimum wage is $17.13/hr (2026).",
-      "Exempt salary thresholds in WA are tied to multiples of state minimum wage (2.0x = $71,260.80/yr or $1,370.40/wk under WAC 296-128-545).",
+      "Exempt salary thresholds in WA are tied to multiples of state minimum wage (2.25x = $80,168.40/yr or $1,541.70/wk under WAC 296-128-545 for 2026).",
       "RCW 49.52.070 authorizes double damages (2x) for willful failure to pay earned wages."
     ]
   },
