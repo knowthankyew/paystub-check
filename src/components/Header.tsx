@@ -1,14 +1,16 @@
 import React from 'react';
-import { DollarSign, Lock, FileText, ChevronDown } from 'lucide-react';
+import { DollarSign, Lock, FileText, ChevronDown, BookOpen, Flame } from 'lucide-react';
 import { SAMPLE_PAYSTUBS } from '../legal/samplePaystubs';
 import { SamplePaystub } from '../legal/types';
 
 interface HeaderProps {
   onSelectSample: (sample: SamplePaystub) => void;
   onReset: () => void;
+  onOpenSources: () => void;
+  onBurnData: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset }) => {
+export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset, onOpenSources, onBurnData }) => {
   return (
     <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -42,11 +44,21 @@ export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset }) => {
             <span className="font-medium">100% Offline & Private</span>
           </div>
 
+          {/* Grounded Sources Button */}
+          <button
+            onClick={onOpenSources}
+            className="flex items-center space-x-1.5 text-xs font-medium text-slate-300 hover:text-emerald-300 bg-slate-800 hover:bg-slate-700/80 px-3 py-1.5 rounded-lg border border-slate-700 transition-all shadow-sm"
+            title="Inspect governing federal and state wage statutes"
+          >
+            <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Grounded Sources</span>
+          </button>
+
           {/* Preset Paystubs Dropdown */}
           <div className="relative group">
             <button className="flex items-center space-x-2 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 px-3.5 py-1.5 rounded-lg border border-slate-700 transition-all shadow-sm">
               <FileText className="w-3.5 h-3.5 text-teal-400" />
-              <span>Load Sample Pay Stub</span>
+              <span>Load Sample</span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:rotate-180 transition-transform" />
             </button>
             <div className="absolute right-0 mt-1 w-72 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-1.5 hidden group-hover:block z-50 animate-in fade-in slide-in-from-top-2 duration-150">
@@ -70,9 +82,20 @@ export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset }) => {
             </div>
           </div>
 
+          {/* Burn Local Data Button */}
+          <button
+            onClick={onBurnData}
+            className="flex items-center space-x-1.5 text-xs font-semibold text-rose-300 hover:text-rose-100 bg-rose-950/30 hover:bg-rose-900/60 px-3 py-1.5 rounded-lg border border-rose-800/40 transition-all shadow-sm"
+            title="Instantly clear all local paystub text, OCR buffers, and analysis memory"
+          >
+            <Flame className="w-3.5 h-3.5 text-rose-400" />
+            <span>Burn Local Data</span>
+          </button>
+
         </div>
 
       </div>
     </header>
   );
 };
+

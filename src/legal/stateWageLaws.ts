@@ -6,8 +6,8 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateCode: "CA",
     stateName: "California",
     statuteRef: "Cal. Lab. Code § 510, § 515, § 226, & IWC Orders",
-    minimumWageRate: 16.00,
-    exemptionSalaryThreshold: 66560, // 2x California minimum wage ($16 * 2 * 2080 hrs)
+    minimumWageRate: 16.90,
+    exemptionSalaryThreshold: 70304, // 2x California minimum wage ($16.90 * 2 * 2080 hrs)
     dailyOvertimeThreshold: 8, // 1.5x after 8 hrs in a single workday
     doubleTimeThreshold: 12, // 2.0x after 12 hrs in a single workday
     weeklyOvertimeThreshold: 40,
@@ -15,7 +15,7 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateTaxName: "CA SDI (State Disability Insurance)",
     waitingTimePenaltyDays: 30, // Cal. Lab. Code § 203 waiting time penalty up to 30 days full wages
     specialRules: [
-      "Cal. Lab. Code § 515(a) mandates a salary of at least $66,560/yr ($1,280/wk) to be exempt from overtime. Paying under this threshold means the worker is non-exempt regardless of job title.",
+      "Cal. Lab. Code § 515(a) mandates a salary of at least $70,304/yr ($1,352/wk) to be exempt from overtime. Paying under this threshold means the worker is non-exempt regardless of job title.",
       "California mandates 1.5x overtime after 8 hours in a single workday, and 2.0x double time after 12 hours.",
       "7th Consecutive Workday Rule: 1.5x for first 8 hours on 7th consecutive day of workweek, 2.0x thereafter.",
       "Cal. Lab. Code § 221 & Kerr's Catering ban all deductions for cash register shortages or breakage, even if authorized in writing.",
@@ -27,14 +27,14 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateCode: "NY",
     stateName: "New York",
     statuteRef: "N.Y. Lab. Law § 190 et seq., § 195, & 12 NYCRR § 142-2.14",
-    minimumWageRate: 16.00, // NYC, Long Island, Westchester ($15.00 Rest of State)
-    exemptionSalaryThreshold: 62400, // $1,200/wk for NYC/LI/Westchester; $58,500 rest of NY
+    minimumWageRate: 17.00, // NYC, Long Island, Westchester ($16.00 Rest of State)
+    exemptionSalaryThreshold: 66300, // $1,275/wk for NYC/LI/Westchester; $62,400 rest of NY
     weeklyOvertimeThreshold: 40,
     hasStateDisabilityTax: true,
     stateTaxName: "NY DBL / PFL (Paid Family Leave)",
     statutoryDamagesMultiplier: "100% Liquidated Damages + Interest",
     specialRules: [
-      "12 NYCRR § 142-2.14 requires an exempt salary of at least $62,400/yr ($1,200/wk) in NYC/Long Island/Westchester ($58,500 upstate).",
+      "12 NYCRR § 142-2.14 requires an exempt salary of at least $66,300/yr ($1,275/wk) in NYC/Long Island/Westchester ($62,400 upstate).",
       "N.Y. Lab. Law § 193 strictly bans deductions for cash shortages, till shortages, or business expenses.",
       "New York Wage Theft Prevention Act (§ 195) mandates written wage notices upon hire and detailed pay stub itemization.",
       "Spread of Hours Rule: Extra 1 hour of pay at minimum wage if workday exceeds 10 hours from start to finish.",
@@ -44,7 +44,7 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
   MA: {
     stateCode: "MA",
     stateName: "Massachusetts",
-    statuteRef: "M.G.L. c. 149 § 148 (Weekly Wage Act) & c. 151 § 1A",
+    statuteRef: "M.G.L. c. 149 §§ 148, 150 (Weekly Wage Act & Treble Damages) & c. 151 § 1A",
     minimumWageRate: 15.00,
     exemptionSalaryThreshold: FLSA_BINDING_FEDERAL_SALARY_THRESHOLD,
     weeklyOvertimeThreshold: 40,
@@ -52,7 +52,7 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateTaxName: "MA PFML (Paid Family and Medical Leave)",
     statutoryDamagesMultiplier: "MANDATORY Treble Damages (3x)",
     specialRules: [
-      "M.G.L. c. 149 § 148 STRICTLY MANDATES automatic mandatory TREBLE DAMAGES (3x) for any late or unpaid wages.",
+      "M.G.L. c. 149, § 150 strictly mandates automatic mandatory TREBLE DAMAGES (3x) for any late or unpaid wages violating § 148.",
       "Prevailing workers recover mandatory 100% reasonable attorney fees and litigation costs under Massachusetts law.",
       "M.G.L. c. 149 § 150 & Camara v. AG strictly ban deductions for damages or shortages as impermissible self-help.",
       "Employees must be paid within 6 or 7 days of the end of the pay period depending on pay frequency."
@@ -62,15 +62,15 @@ export const STATE_WAGE_LAWS: Record<string, StateWageRule> = {
     stateCode: "WA",
     stateName: "Washington",
     statuteRef: "RCW 49.46 (Minimum Wage Act), RCW 49.52, & WAC 296-128-545",
-    minimumWageRate: 16.28,
-    exemptionSalaryThreshold: 67725, // 2x state minimum wage ($67,724.80/yr)
+    minimumWageRate: 17.13,
+    exemptionSalaryThreshold: 71261, // 2x state minimum wage ($71,260.80/yr)
     weeklyOvertimeThreshold: 40,
     hasStateDisabilityTax: true,
     stateTaxName: "WA PFML & WA Cares Fund",
     statutoryDamagesMultiplier: "Double Damages (2x)",
     specialRules: [
-      "Washington has one of the highest state minimum wages in the nation ($16.28/hr in 2024).",
-      "Exempt salary thresholds in WA are tied to multiples of state minimum wage ($67,724.80/yr in 2024).",
+      "Washington state minimum wage is $17.13/hr (2026).",
+      "Exempt salary thresholds in WA are tied to multiples of state minimum wage (2.0x = $71,260.80/yr or $1,370.40/wk under WAC 296-128-545).",
       "RCW 49.52.070 authorizes double damages (2x) for willful failure to pay earned wages."
     ]
   },

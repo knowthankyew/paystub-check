@@ -8,7 +8,7 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
 
   // 1. Detect Document Type
   let documentType: "Pay Stub" | "Offer Letter / Contract" | "Wage Statement" = "Pay Stub";
-  if (/offer\s+letter|employment\s+agreement|salary\s+offer|compensation\s+package/i.test(cleanText)) {
+  if (/offer\s+letter|offer\s+of\s+employment|employment\s+agreement|employment\s+offer|salary\s+offer|compensation\s+package/i.test(cleanText)) {
     documentType = "Offer Letter / Contract";
   } else if (/wage\s+statement|pay\s+advice|direct\s+deposit\s+stub/i.test(cleanText)) {
     documentType = "Wage Statement";
@@ -117,8 +117,7 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
   const lines = cleanText.split("\n");
 
   lines.forEach(line => {
-    if (/ytd/i.test(line) && !/current/i.test(line)) return;
-    const deductionMatch = line.match(/(fica|medicare|social\s+security|fed\s+tax|state\s+tax|sdi|pfl|uniform|shortage|tool|equipment|garnishment|insurance|health)\s*[:$]?\s*\$?(-?[\d,]+\.?\d*)/i);
+    const deductionMatch = line.match(/(fica|medicare|social\s+security|fed(?:eral)?\s+tax|state\s+tax|sdi|pfl|uniform|shortage|till\s+shortage|tool|equipment|garnishment|insurance|health)[^$\d\n]*[:$]?\s*\$?(-?[\d,]+\.?\d+)/i);
     if (deductionMatch) {
       const name = deductionMatch[1].trim();
       const amt = Math.abs(parseFloat(deductionMatch[2].replace(/,/g, "")));
