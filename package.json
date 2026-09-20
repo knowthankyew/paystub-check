@@ -13,6 +13,7 @@
     "record:demo": "bash scripts/record-demo.sh"
   },
   "dependencies": {
+    "@knowthankyew/privacy-telemetry": "file:../privacy-telemetry/packages/privacy-telemetry",
     "lucide-react": "^1.46.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
