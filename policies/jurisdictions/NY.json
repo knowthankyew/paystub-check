@@ -1,0 +1,30 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "NY",
+    "name": "New York",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "N.Y. Lab. Law § 190 et seq., § 195, & 12 NYCRR § 142-2.14",
+    "officialSourceUrl": "https://dol.ny.gov/"
+  },
+  "standards": {
+    "minimumWageRate": 17.00,
+    "exemptionSalaryThreshold": 66300,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": true,
+    "stateTaxName": "NY DBL / PFL (Paid Family Leave)",
+    "statutoryDamagesMultiplier": "100% Liquidated Damages + Interest",
+    "specialRules": [
+      "12 NYCRR § 142-2.14 requires an exempt salary of at least $66,300/yr ($1,275/wk) in NYC/Long Island/Westchester ($62,400 upstate).",
+      "N.Y. Lab. Law § 193 strictly bans deductions for cash shortages, till shortages, or business expenses.",
+      "New York Wage Theft Prevention Act (§ 195) mandates written wage notices upon hire and detailed pay stub itemization.",
+      "Spread of Hours Rule: Extra 1 hour of pay at minimum wage if workday exceeds 10 hours from start to finish.",
+      "100% statutory liquidated damages plus 9% prejudgment interest for willful unpaid wages under N.Y. Lab. Law § 198."
+    ]
+  }
+}

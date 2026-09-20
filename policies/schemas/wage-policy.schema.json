@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knowthankyew.org/schemas/v1/wage-policy.schema.json",
+  "title": "WageAndLaborPolicyPack",
+  "description": "Declarative statutory policy pack for wage, overtime, and labor protection laws",
+  "type": "object",
+  "required": [
+    "jurisdiction",
+    "metadata",
+    "standards"
+  ],
+  "properties": {
+    "jurisdiction": {
+      "type": "object",
+      "required": ["code", "name", "type"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[A-Z]{2,4}$" },
+        "name": { "type": "string", "minLength": 2 },
+        "type": { "type": "string", "enum": ["federal", "state", "municipal"] }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["version", "statuteRef"],
+      "properties": {
+        "version": { "type": "string" },
+        "effectiveDate": { "type": "string" },
+        "lastAudited": { "type": "string" },
+        "statuteRef": { "type": "string", "minLength": 3 },
+        "officialSourceUrl": { "type": "string" }
+      }
+    },
+    "standards": {
+      "type": "object",
+      "required": [
+        "minimumWageRate",
+        "weeklyOvertimeThreshold",
+        "hasStateDisabilityTax",
+        "specialRules"
+      ],
+      "properties": {
+        "minimumWageRate": { "type": "number", "minimum": 0 },
+        "exemptionSalaryThreshold": { "type": "number", "minimum": 0 },
+        "dailyOvertimeThreshold": { "type": "number", "minimum": 0 },
+        "doubleTimeThreshold": { "type": "number", "minimum": 0 },
+        "weeklyOvertimeThreshold": { "type": "number", "minimum": 0 },
+        "hasStateDisabilityTax": { "type": "boolean" },
+        "stateTaxName": { "type": "string" },
+        "waitingTimePenaltyDays": { "type": "number", "minimum": 0 },
+        "statutoryDamagesMultiplier": { "type": "string" },
+        "specialRules": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 5 }
+        }
+      }
+    }
+  }
+}

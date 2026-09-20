@@ -1,0 +1,25 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "XX",
+    "name": "State Name",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "State Labor Code § ...",
+    "officialSourceUrl": "https://..."
+  },
+  "standards": {
+    "minimumWageRate": 15.00,
+    "exemptionSalaryThreshold": 35568,
+    "dailyOvertimeThreshold": 8,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": false,
+    "specialRules": [
+      "Rule description citation and impact."
+    ]
+  }
+}

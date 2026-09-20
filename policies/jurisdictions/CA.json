@@ -1,0 +1,33 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "CA",
+    "name": "California",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "Cal. Lab. Code § 510, § 515, § 226, & IWC Orders",
+    "officialSourceUrl": "https://www.dir.ca.gov/dlse/"
+  },
+  "standards": {
+    "minimumWageRate": 16.90,
+    "exemptionSalaryThreshold": 70304,
+    "dailyOvertimeThreshold": 8,
+    "doubleTimeThreshold": 12,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": true,
+    "stateTaxName": "CA SDI (State Disability Insurance)",
+    "waitingTimePenaltyDays": 30,
+    "specialRules": [
+      "Cal. Lab. Code § 515(a) mandates a salary of at least $70,304/yr ($1,352/wk) to be exempt from overtime. Paying under this threshold means the worker is non-exempt regardless of job title.",
+      "California mandates 1.5x overtime after 8 hours in a single workday, and 2.0x double time after 12 hours.",
+      "7th Consecutive Workday Rule: 1.5x for first 8 hours on 7th consecutive day of workweek, 2.0x thereafter.",
+      "Cal. Lab. Code § 221 & Kerr's Catering ban all deductions for cash register shortages or breakage, even if authorized in writing.",
+      "Cal. Lab. Code § 226 mandates itemized pay stubs with gross/net pay, total hours, rates, and employer address.",
+      "Waiting Time Penalties: Failure to pay all wages due upon termination triggers up to 30 days of full daily wage penalties under § 203."
+    ]
+  }
+}

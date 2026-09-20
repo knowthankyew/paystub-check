@@ -1,0 +1,29 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "CO",
+    "name": "Colorado",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "Colo. Rev. Stat. § 8-4-101 et seq. & COMPS Order #39",
+    "officialSourceUrl": "https://cdle.colorado.gov/wage-and-hour-laws"
+  },
+  "standards": {
+    "minimumWageRate": 14.42,
+    "exemptionSalaryThreshold": 55000,
+    "dailyOvertimeThreshold": 12,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": true,
+    "stateTaxName": "CO FAMLI (Family and Medical Leave Insurance)",
+    "statutoryDamagesMultiplier": "Penalties up to 3x Unpaid Wages",
+    "specialRules": [
+      "COMPS Order #39 mandates an annual exempt salary of at least $55,000 ($1,057.69/wk).",
+      "Colorado requires 1.5x overtime after 12 hours worked in a single workday or 12 consecutive hours.",
+      "Deductions for cash shortages or property damage are strictly restricted under C.R.S. § 8-4-105."
+    ]
+  }
+}

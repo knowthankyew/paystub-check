@@ -1,0 +1,26 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "US",
+    "name": "General US Federal Standard",
+    "type": "federal"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "Fair Labor Standards Act (29 U.S.C. § 201 et seq.)",
+    "officialSourceUrl": "https://www.dol.gov/agencies/whd/flsa"
+  },
+  "standards": {
+    "minimumWageRate": 7.25,
+    "exemptionSalaryThreshold": 35568,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": false,
+    "specialRules": [
+      "Federal FLSA mandates minimum wage of $7.25/hr and 1.5x overtime for hours worked beyond 40/week.",
+      "Federal binding salary basis threshold is $35,568/yr ($684/wk) following the nationwide vacatur of the 2024 rule.",
+      "Prevailing workers recover 100% back pay, 100% liquidated double damages, and attorney fees under 29 U.S.C. § 216(b)."
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "TX",
+    "name": "Texas",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "Tex. Lab. Code § 61.001 et seq. (Texas Payday Law)",
+    "officialSourceUrl": "https://www.twc.texas.gov/jobseekers/texas-payday-law"
+  },
+  "standards": {
+    "minimumWageRate": 7.25,
+    "exemptionSalaryThreshold": 35568,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": false,
+    "specialRules": [
+      "Texas follows federal FLSA minimum wage ($7.25/hr) and weekly overtime rules (40 hrs/wk).",
+      "Texas Payday Law governs wage claims through the Texas Workforce Commission (TWC).",
+      "Deductions require prior written authorization signed by the employee."
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "../schemas/wage-policy.schema.json",
+  "jurisdiction": {
+    "code": "FL",
+    "name": "Florida",
+    "type": "state"
+  },
+  "metadata": {
+    "version": "2026.1",
+    "effectiveDate": "2026-01-01",
+    "lastAudited": "2026-09-01",
+    "statuteRef": "Fla. Stat. § 448.110 & Fla. Const. Art. X, § 24",
+    "officialSourceUrl": "https://www.floridajobs.org/"
+  },
+  "standards": {
+    "minimumWageRate": 13.00,
+    "exemptionSalaryThreshold": 35568,
+    "weeklyOvertimeThreshold": 40,
+    "hasStateDisabilityTax": false,
+    "specialRules": [
+      "Florida constitutional minimum wage increases by $1.00 each September until reaching $15.00/hr in 2026.",
+      "Must serve 15-day written notice to employer prior to filing statutory minimum wage lawsuit under Fla. Stat. § 448.110."
+    ]
+  }
+}
