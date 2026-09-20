@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Upload, Sparkles, Loader2, MapPin } from 'lucide-react';
 import { ALL_US_STATES } from '../legal/stateWageLaws';
 import { performClientSideOCR, OCRProgress } from '../legal/ocr';
+import { telemetry } from '../legal/telemetry';
 
 interface PaystubInputProps {
   inputText: string;
@@ -168,7 +169,7 @@ export const PaystubInput: React.FC<PaystubInputProps> = ({
       {/* Action Button */}
       <div className="flex items-center justify-between pt-1">
         <p className="text-xs text-slate-400 hidden sm:block">
-          All analysis runs 100% locally in your web browser. Zero server uploads.
+          {telemetry.getPrivacyClaims().dropzoneNotice}
         </p>
 
         <button

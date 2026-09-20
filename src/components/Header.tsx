@@ -1,16 +1,26 @@
 import React from 'react';
-import { DollarSign, Lock, FileText, ChevronDown, BookOpen, Flame } from 'lucide-react';
+import { DollarSign, Lock, FileText, ChevronDown, BookOpen, Flame, AlertTriangle } from 'lucide-react';
 import { SAMPLE_PAYSTUBS } from '../legal/samplePaystubs';
 import { SamplePaystub } from '../legal/types';
+import { telemetry } from '../legal/telemetry';
 
 interface HeaderProps {
   onSelectSample: (sample: SamplePaystub) => void;
   onReset: () => void;
   onOpenSources: () => void;
+  onOpenPrivacyAudit: () => void;
   onBurnData: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset, onOpenSources, onBurnData }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onSelectSample,
+  onReset,
+  onOpenSources,
+  onOpenPrivacyAudit,
+  onBurnData
+}) => {
+  const claims = telemetry.getPrivacyClaims();
+
   return (
     <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -25,9 +35,15 @@ export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset, onOpenS
               <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
                 PaystubCheck
               </h1>
-              <span className="text-[10px] uppercase font-mono tracking-widest px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                MIT Public Good
-              </span>
+              {claims.isEnterpriseBuild ? (
+                <span className="text-[10px] uppercase font-mono tracking-widest px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                  ENTERPRISE (OTLP)
+                </span>
+              ) : (
+                <span className="text-[10px] uppercase font-mono tracking-widest px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  MIT Public Good
+                </span>
+              )}
             </div>
             <p className="text-xs text-slate-400">
               FLSA overtime, withholding math & state wage law reality check
@@ -39,10 +55,23 @@ export const Header: React.FC<HeaderProps> = ({ onSelectSample, onReset, onOpenS
         <div className="flex items-center flex-wrap justify-center gap-3">
           
           {/* Privacy Pill */}
-          <div className="flex items-center space-x-1.5 text-xs text-emerald-400 bg-slate-950/80 px-3 py-1.5 rounded-full border border-emerald-500/30 shadow-inner">
-            <Lock className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-medium">100% Offline & Private</span>
-          </div>
+          <button
+            type="button"
+            onClick={onOpenPrivacyAudit}
+            className={`flex items-center space-x-1.5 text-xs px-3 py-1.5 rounded-full border shadow-inner transition-colors cursor-pointer ${
+              claims.isLocalOnlyHonest
+                ? 'text-emerald-400 bg-slate-950/80 border-emerald-500/30 hover:border-emerald-500/50'
+                : 'text-amber-400 bg-amber-950/30 border-amber-500/40 hover:border-amber-500/60'
+            }`}
+            title="Inspect real-time telemetry mode, egress policy, and session audit trails"
+          >
+            {claims.isEnterpriseBuild ? (
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+            ) : (
+              <Lock className="w-3.5 h-3.5 text-emerald-400" />
+            )}
+            <span className="font-medium">{claims.badgeLabel}</span>
+          </button>
 
           {/* Grounded Sources Button */}
           <button
