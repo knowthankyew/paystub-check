@@ -34,7 +34,6 @@ describe('PaystubCheck TelemetryManager & Privacy Invariants', () => {
     expect(spans[0].status).toBe('OK');
     expect(spans[0].attributes.state).toBe('CA');
   });
-
   it('strictly redacts any attribute not registered in the safe allowlist', () => {
     const span = tm.startSpan('parse_paystub', {
       state: 'NY',
@@ -44,6 +43,7 @@ describe('PaystubCheck TelemetryManager & Privacy Invariants', () => {
       matchedText: 'short 40 char snippet of wage data',
       gross_pay: 3500,
       net_pay: 2600,
+      overtime_hours: 10,
     });
     span.end('OK');
 
@@ -51,12 +51,13 @@ describe('PaystubCheck TelemetryManager & Privacy Invariants', () => {
     expect(spans).toHaveLength(1);
     const attrs = spans[0].attributes;
 
-    // Allowlisted keys pass through
+    // Allowlisted operational keys pass through
     expect(attrs.state).toBe('NY');
-    expect(attrs.gross_pay).toBe(3500);
-    expect(attrs.net_pay).toBe(2600);
+    expect(attrs.overtime_hours).toBe(10);
 
-    // Non-allowlisted keys are strictly redacted by default
+    // Sensitive financial and personal keys are strictly redacted by default
+    expect(attrs.gross_pay).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
+    expect(attrs.net_pay).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
     expect(attrs.employee_name).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
     expect(attrs.ssn).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
     expect(attrs.paystub_text).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');

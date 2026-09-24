@@ -34,19 +34,17 @@ export type {
 
 export { MemoryExporter };
 
-// Domain-specific operational attributes for PaystubCheck
+// Domain-specific operational attributes for PaystubCheck (sensitive wages/deductions strictly excluded)
 export const PAYSTUB_ALLOWLIST_KEYS: ReadonlySet<string> = new Set([
   'state',
-  'gross_pay',
-  'net_pay',
   'overtime_hours',
   'regular_hours',
-  'hourly_rate',
   'redflag_count',
-  'total_deductions',
   'is_compliant',
   'parsed_line_count',
   'ocr_used',
+  'has_overtime',
+  'has_deductions',
 ]);
 
 export const SAFE_ALLOWLIST_KEYS: ReadonlySet<string> = new Set([
