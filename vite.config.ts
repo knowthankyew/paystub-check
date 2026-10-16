@@ -17,5 +17,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    reporters: ['default', 'json'],
+    outputFile: {
+      json: '.vitest/json/output.json'
+    }
   }
 });

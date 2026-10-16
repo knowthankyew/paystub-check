@@ -36,11 +36,11 @@ jobs:
       - name: Validate Declarative Policy Packs (Track 2)
         run: npm run validate:policies
 
-      - name: Audit Documentation & Architectural Claims
-        run: npm run audit:claims
-
       - name: Run Test Suite (Vitest)
         run: npm test
+
+      - name: Audit Documentation & Architectural Claims
+        run: npm run audit:claims
 
       - name: Build Production Bundle
         run: npm run build

@@ -89,27 +89,68 @@ export function App() {
     setInputText('');
   };
 
-  const handleBurnData = () => {
+  const handleBurnData = async () => {
     terminateOcrWorker().catch(() => {});
     telemetry.burn();
+
+    const cleanupPromises: Promise<unknown>[] = [];
+
     try {
       localStorage.clear();
-      sessionStorage.clear();
-      if (typeof window !== 'undefined' && 'caches' in window) {
-        window.caches.keys().then((keys) => {
-          keys.forEach((k) => window.caches.delete(k));
-        });
-      }
-      if (typeof window !== 'undefined' && 'indexedDB' in window && typeof indexedDB.databases === 'function') {
-        indexedDB.databases().then((dbs) => {
-          for (const db of dbs) {
-            if (db.name) indexedDB.deleteDatabase(db.name);
-          }
-        });
-      }
     } catch {
-      // storage clear best-effort in sandbox/isolated environments
+      // storage clear best-effort
     }
+
+    try {
+      sessionStorage.clear();
+    } catch {
+      // storage clear best-effort
+    }
+
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      cleanupPromises.push(
+        window.caches
+          .keys()
+          .then((keys) => Promise.allSettled(keys.map((k) => window.caches.delete(k))))
+          .catch(() => {})
+      );
+    }
+
+    if (
+      typeof window !== 'undefined' &&
+      'indexedDB' in window &&
+      typeof indexedDB.databases === 'function'
+    ) {
+      cleanupPromises.push(
+        indexedDB
+          .databases()
+          .then((dbs) => {
+            const deletions = dbs
+              .map((db) => db.name)
+              .filter((name): name is string => typeof name === 'string' && name.length > 0)
+              .map(
+                (name) =>
+                  new Promise<void>((resolve, reject) => {
+                    try {
+                      const req = indexedDB.deleteDatabase(name);
+                      req.onsuccess = () => resolve();
+                      req.onerror = () => reject(req.error || new Error(`Failed to delete database ${name}`));
+                      req.onblocked = () => reject(new Error(`IndexedDB delete blocked for ${name}`));
+                    } catch (err) {
+                      reject(err);
+                    }
+                  })
+              );
+            return Promise.allSettled(deletions);
+          })
+          .catch(() => {})
+      );
+    }
+
+    if (cleanupPromises.length > 0) {
+      await Promise.allSettled(cleanupPromises);
+    }
+
     setAnalysisResult(null);
     setInputText('');
     setActiveTab('overview');

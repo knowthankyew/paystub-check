@@ -10,6 +10,7 @@ build
 *.log
 .DS_Store
 .temp_demo_videos
+.vitest/
 
 # Agent Steering & Local Specs
 .kiro/

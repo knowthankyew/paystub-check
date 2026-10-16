@@ -13,6 +13,24 @@ describe('PaystubCheck Claims & Privacy Invariant Linter (claims-linter.test.ts)
     const errors: string[] = [];
     auditZeroEgress(errors);
     expect(errors).toEqual([]);
+
+    // Fixture-based negative test asserting off-host CSP tokens are reported
+    const offHostErrors: string[] = [];
+    auditZeroEgress(offHostErrors, {
+      overrideIndexContent: '<meta http-equiv="Content-Security-Policy" content="connect-src https://api.leakage.org">',
+    });
+    expect(offHostErrors.some((e) => e.includes('Unauthorized remote connect-src token detected'))).toBe(true);
+
+    // Fixture-based negative test asserting unauthorized egress primitives are reported
+    const primitiveErrors: string[] = [];
+    auditZeroEgress(primitiveErrors, {
+      overrideCodeSnippets: [
+        'const f = fetch;',
+        'navigator?.sendBeacon("/api/telemetry");',
+        'const ws = new WebSocket("wss://evil.com");',
+      ],
+    });
+    expect(primitiveErrors.length).toBe(3);
   });
 
   it('enforces statutory citation parity between README and policy engines', () => {
@@ -39,5 +57,14 @@ describe('PaystubCheck Claims & Privacy Invariant Linter (claims-linter.test.ts)
     if (checked) {
       expect(errors).toEqual([]);
     }
+
+    // Negative test: brief required but missing
+    const missingErrors: string[] = [];
+    auditPortfolioMasterBrief(missingErrors, {
+      requireBrief: true,
+      overrideBriefPath: '/non-existent/path/BRIEF.md',
+    });
+    expect(missingErrors.length).toBeGreaterThan(0);
+    expect(missingErrors[0]).toContain('not found but required via --require-brief');
   });
 });
