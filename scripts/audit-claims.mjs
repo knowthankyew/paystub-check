@@ -17,7 +17,7 @@
  *    - Verifies that KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md accurately reflects current PaystubCheck test count.
  */
 
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { resolve, dirname, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
@@ -298,28 +298,31 @@ export function auditPortfolioMasterBrief(
 
   const documentedCount = parseInt(match[1], 10);
   const vitestReportPath = resolve(REPO_ROOT, '.vitest/json/output.json');
+  const testsDir = resolve(REPO_ROOT, 'tests/unit');
   let actualCount = 0;
 
-  if (existsSync(vitestReportPath)) {
+  if (existsSync(vitestReportPath) && existsSync(testsDir)) {
     try {
-      const data = JSON.parse(readFileSync(vitestReportPath, 'utf-8'));
-      if (typeof data.numTotalTests === 'number') {
-        actualCount = data.numTotalTests;
+      const reportMtime = statSync(vitestReportPath).mtimeMs;
+      const testFiles = readdirSync(testsDir).filter((f) => f.endsWith('.test.ts') || f.endsWith('.test.js'));
+      const newestTestMtime = Math.max(...testFiles.map((f) => statSync(resolve(testsDir, f)).mtimeMs), 0);
+      if (reportMtime >= newestTestMtime) {
+        const data = JSON.parse(readFileSync(vitestReportPath, 'utf-8'));
+        if (typeof data.numTotalTests === 'number') {
+          actualCount = data.numTotalTests;
+        }
       }
     } catch {
       // Ignored: fallback below
     }
   }
 
-  if (actualCount === 0) {
-    const testsDir = resolve(REPO_ROOT, 'tests/unit');
-    if (existsSync(testsDir)) {
-      const testFiles = readdirSync(testsDir).filter((f) => f.endsWith('.test.ts') || f.endsWith('.test.js'));
-      for (const file of testFiles) {
-        const code = readFileSync(resolve(testsDir, file), 'utf-8');
-        const itMatches = code.match(/(?<![\.\$a-zA-Z0-9_])(?:it|test)(?:\.only|\.skip)?\s*\(/g) || [];
-        actualCount += itMatches.length;
-      }
+  if (actualCount === 0 && existsSync(testsDir)) {
+    const testFiles = readdirSync(testsDir).filter((f) => f.endsWith('.test.ts') || f.endsWith('.test.js'));
+    for (const file of testFiles) {
+      const code = readFileSync(resolve(testsDir, file), 'utf-8');
+      const itMatches = code.match(/(?<![\.\$a-zA-Z0-9_])(?:it|test)(?:\.only|\.skip)?\s*\(/g) || [];
+      actualCount += itMatches.length;
     }
   }
 
