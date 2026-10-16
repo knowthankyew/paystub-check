@@ -311,23 +311,6 @@ export function auditPortfolioMasterBrief(
     }
   }
 
-  if (actualCount === 0 && !process.env.VITEST) {
-    try {
-      execSync('npx vitest run --reporter=json --outputFile.json=.vitest/json/output.json', {
-        cwd: REPO_ROOT,
-        stdio: 'pipe',
-      });
-      if (existsSync(vitestReportPath)) {
-        const data = JSON.parse(readFileSync(vitestReportPath, 'utf-8'));
-        if (typeof data.numTotalTests === 'number') {
-          actualCount = data.numTotalTests;
-        }
-      }
-    } catch {
-      // Ignored
-    }
-  }
-
   if (actualCount === 0) {
     const testsDir = resolve(REPO_ROOT, 'tests/unit');
     if (existsSync(testsDir)) {
