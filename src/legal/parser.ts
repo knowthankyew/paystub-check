@@ -84,6 +84,13 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
     overtimeHours = parseFloat(otHoursMatch[1]);
   }
 
+  // Guard parsed numerical values against NaN and negative bounds
+  if (isNaN(grossPay) || !isFinite(grossPay) || grossPay < 0) grossPay = 0;
+  if (isNaN(netPay) || !isFinite(netPay) || netPay < 0) netPay = 0;
+  if (isNaN(hourlyRate) || !isFinite(hourlyRate) || hourlyRate < 0) hourlyRate = 0;
+  if (isNaN(hoursWorked) || !isFinite(hoursWorked) || hoursWorked < 0) hoursWorked = 0;
+  if (isNaN(overtimeHours) || !isFinite(overtimeHours) || overtimeHours < 0) overtimeHours = 0;
+
   // Detect Pay Frequency & Annual Salary (including Semi-Monthly 24 periods)
   let calculatedAnnualSalary = 0;
   const salaryMatch = cleanText.match(/(\$?\s*[\d,]+(?:\.\d+)?)\s*(?:per\s+year|\/yr|annual|annually)/i);
@@ -107,6 +114,10 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
     if (grossPay > 0) calculatedAnnualSalary = grossPay * 26;
   }
 
+  if (isNaN(calculatedAnnualSalary) || !isFinite(calculatedAnnualSalary) || calculatedAnnualSalary < 0) {
+    calculatedAnnualSalary = 0;
+  }
+
   // Fallback estimates if rate and hours are given
   if (grossPay === 0 && hourlyRate > 0 && hoursWorked > 0) {
     grossPay = Math.round(hourlyRate * hoursWorked * 100) / 100;
@@ -120,7 +131,8 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
     const deductionMatch = line.match(/(fica|medicare|social\s+security|fed(?:eral)?\s+tax|state\s+tax|sdi|pfl|uniform|shortage|till\s+shortage|tool|equipment|garnishment|insurance|health)[^$\d\n]*[:$]?\s*\$?(-?[\d,]+\.?\d+)/i);
     if (deductionMatch) {
       const name = deductionMatch[1].trim();
-      const amt = Math.abs(parseFloat(deductionMatch[2].replace(/,/g, "")));
+      const parsedAmt = parseFloat(deductionMatch[2].replace(/,/g, ""));
+      const amt = isNaN(parsedAmt) ? 0 : Math.abs(parsedAmt);
       const lowerName = name.toLowerCase();
 
       const isStatutoryTax = /fica|medicare|social|fed|state|sdi|pfl|tax/i.test(lowerName);
@@ -171,7 +183,7 @@ export function analyzePaystubText(text: string, stateCode: string = "CA"): Lega
     if (match) {
       const quote = match[0].trim();
       redFlags.push({
-        id: rule.id + "_" + Math.random().toString(36).substr(2, 5),
+        id: rule.id + "_" + Math.random().toString(36).substring(2, 7),
         quote: quote.length > 120 ? quote.substring(0, 117) + "..." : quote,
         title: rule.title,
         severity: rule.severity,

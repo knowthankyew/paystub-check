@@ -62,4 +62,32 @@ Net Pay: $2,364.52
     expect(result.redFlags.filter((rf) => rf.severity === 'unlawful').length).toBe(0);
     expect(result.complianceScore).toBeGreaterThanOrEqual(85);
   });
+
+  it('resilience: handles empty or whitespace text safely without crashing or returning NaN', () => {
+    const emptyResult = analyzePaystubText('', 'CA');
+    expect(emptyResult.complianceScore).toBe(100);
+    expect(emptyResult.extractedPay.grossPay).toBe(0);
+    expect(emptyResult.extractedPay.netPay).toBe(0);
+    expect(emptyResult.extractedPay.calculatedAnnualSalary).toBe(0);
+    expect(emptyResult.redFlags).toEqual([]);
+
+    const whitespaceResult = analyzePaystubText('   \n\t  ', 'NY');
+    expect(whitespaceResult.complianceScore).toBe(100);
+    expect(whitespaceResult.extractedPay.grossPay).toBe(0);
+  });
+
+  it('resilience: safely parses malformed, non-numeric, or negative wage figures', () => {
+    const malformedText = `
+      Gross Pay: $NaN
+      Net Pay: $-500.00
+      Hourly Rate: $abc
+      Regular Hours: $invalid
+      FICA: $-25.00
+    `;
+    const result = analyzePaystubText(malformedText, 'TX');
+    expect(isNaN(result.extractedPay.grossPay)).toBe(false);
+    expect(isNaN(result.extractedPay.netPay)).toBe(false);
+    expect(result.extractedPay.grossPay).toBeGreaterThanOrEqual(0);
+    expect(result.extractedPay.netPay).toBeGreaterThanOrEqual(0);
+  });
 });

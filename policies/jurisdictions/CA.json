@@ -9,7 +9,7 @@
     "version": "2026.1",
     "effectiveDate": "2026-01-01",
     "lastAudited": "2026-09-01",
-    "statuteRef": "Cal. Lab. Code § 510, § 515, § 226, & IWC Orders",
+    "statuteRef": "Cal. Lab. Code § 203, § 510, § 515, § 226, & IWC Orders",
     "officialSourceUrl": "https://www.dir.ca.gov/dlse/"
   },
   "standards": {
@@ -27,7 +27,7 @@
       "7th Consecutive Workday Rule: 1.5x for first 8 hours on 7th consecutive day of workweek, 2.0x thereafter.",
       "Cal. Lab. Code § 221 & Kerr's Catering ban all deductions for cash register shortages or breakage, even if authorized in writing.",
       "Cal. Lab. Code § 226 mandates itemized pay stubs with gross/net pay, total hours, rates, and employer address.",
-      "Waiting Time Penalties: Failure to pay all wages due upon termination triggers up to 30 days of full daily wage penalties under § 203."
+      "Waiting Time Penalties: Failure to pay all wages due upon termination triggers up to 30 days of full daily wage penalties under Cal. Lab. Code § 203."
     ]
   }
 }

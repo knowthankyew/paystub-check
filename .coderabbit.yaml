@@ -1,0 +1,92 @@
+# CodeRabbit Configuration for PaystubCheck
+# Targeted Scope: Pay Stub & Wage Statement Audit, FLSA Statutory Exemption Compliance, State Wage-and-Hour Laws, Air-Gapped Client-Side WASM OCR, Zero-Egress Privacy & Supply Chain Assurance
+
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  sequence_diagrams: true
+  auto_review:
+    enabled: true
+    drafts: false
+
+  # Filter out compiled distributions, media files, demo recordings, and local caches
+  path_filters:
+    - "!**/*.mp4"
+    - "!**/*.gif"
+    - "!**/*.webm"
+    - "!**/*.png"
+    - "!**/*.svg"
+    - "!dist/**"
+    - "!node_modules/**"
+    - "!bom.json"
+    - "!dist/bom.json"
+    - "!demo.gif"
+    - "!demo.mp4"
+
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        You are performing an exhaustive architectural, security, mathematical, legal, and data privacy audit for "PaystubCheck", an open-source, local-first wage statement and pay stub compliance engine evaluating employee compensation against the Fair Labor Standards Act (FLSA) and state wage-and-hour laws.
+
+        Evaluate all code against these non-negotiable architectural invariants:
+
+        1. ZERO WAGE DATA NETWORK TRANSMISSION & AIR-GAPPED PRIVACY (CRITICAL):
+           - In `src/**`, strictly prohibit network egress primitives (`fetch`, `XMLHttpRequest`, `navigator.sendBeacon`, WebSocket, external scripts/analytics). All paystub parsing, salary threshold math, deduction auditing, client-side OCR, and demand letter generation must execute 100% locally within the worker's browser runtime.
+           - Enforce strict Content Security Policy (CSP) in `index.html` restricting `connect-src` to loopback and local OTLP endpoints (`'self' http://localhost:* http://127.0.0.1:* http://otel-collector:*`).
+           - In `src/legal/telemetry.ts`, verify telemetry runs in `memory_only` mode with `MemoryExporter` by default. Operational attributes must strictly adhere to `PAYSTUB_ALLOWLIST_KEYS`. Raw wage slips, pay amounts, employee names, employer names, and social security numbers are strictly prohibited from telemetry spans or audit events.
+           - Nuclear Amnesia / "Burn Local Data": Ensure the instant purge command completely terminates active OCR workers (`terminateOcrWorker()`), wipes telemetry buffers (`telemetry.burn()`), and clears all client storage (`localStorage`, `sessionStorage`, `caches`, `indexedDB`).
+
+        2. FLSA STATUTORY MATHEMATICS & EXEMPTION THRESHOLDS:
+           - In `src/legal/flsa.ts`, `src/legal/parser.ts`, and `policies/jurisdictions/**`:
+             - Federal FLSA Exemption Floor: Following the nationwide vacatur of the 2024 rule (State of Texas v. DOL, Nov 15, 2024), the binding federal salary threshold is $684/week ($35,568/year) under 29 U.S.C. § 213(a)(1) and 29 C.F.R. Part 541.
+             - State Statutory Salary Threshold Precedence: State thresholds supersede the federal floor when higher:
+               - California: $70,304/year ($1,352/week, Cal. Lab. Code § 515(a), 2x min wage).
+               - Washington: $80,168/year ($1,541.70/week, RCW 49.46.010).
+               - New York: $66,300/year downstate ($1,275/week, 12 NYCRR § 142-2.14).
+               - Colorado: $55,000/year (COMPS Order #39).
+             - Unlawful Deductions under 29 C.F.R. § 531.35 ("Free and Clear" rule): Deductions for cash register shortages, uniform purchase/rental, tool fees, or damaged equipment that reduce pay below minimum wage or cut into overtime are strictly illegal under federal law, and prohibited outright in CA (Cal. Lab. Code § 221), NY (NY Lab. Law § 193), and MA.
+             - Overtime Math: Mandatory 1.5x regular rate of pay for hours over 40/week (29 U.S.C. § 207(a)(1)). Daily overtime mandates: CA (8 hrs/day 1.5x, 12 hrs/day 2x), NV, AK.
+             - Numeric Safety: Guard against `NaN`, negative hours, negative pay rates, or division by zero.
+
+        3. CLIENT-SIDE WASM OCR (TESSERACT.JS):
+           - In `src/legal/ocr.ts`:
+             - Tesseract OCR engine must load strictly local assets (`/ocr/worker.min.js`, `/ocr/tesseract-core-lstm.wasm.js`, `/ocr/lang-data`).
+             - Zero remote network calls to CDN or external language models.
+             - Worker instances must be cleanly terminated on task completion or upon invoking "Burn Local Data".
+
+        4. STATUTORY WAGE CLAIM DEMAND LETTERS & UPL SAFE HARBORS:
+           - In `src/legal/demandLetter.ts` and `src/components/DemandLetterGenerator.tsx`:
+             - Generated wage claim demand letters must accurately cite enforceable authorities: FLSA 29 U.S.C. § 216(b) (100% liquidated double damages + mandatory attorney fees), 29 C.F.R. § 531.35, state waiting time penalties (e.g. CA Lab. Code § 203), and mandatory treble damages (Massachusetts M.G.L. c. 149 §§ 148, 150).
+             - Verify rigorous HTML escaping before rendering into print dialogs or printable windows to prevent XSS.
+             - Ensure non-waivable Unauthorized Practice of Law (UPL) legal disclaimers are prominently displayed in all generated documents and user interfaces.
+
+        5. TESTING & CLAIMS AUDITING:
+           - In `scripts/audit-claims.mjs` and `tests/unit/claims-linter.test.ts`, enforce static parity between documentation (`README.md`, `ARCHITECTURE.md`), statutory legal citations, and test inventories.
+           - Prohibit unprovable marketing adjectives ('bulletproof', 'conclusive', 'definitive', 'infinitely scalable').
+           - Verify that `KNOWTHANKYEW_PORTFOLIO_MASTER_BRIEF.md` test counts match actual test inventories.
+
+    - path: "src/legal/**"
+      instructions: "Audit core wage parsing, overtime math, exemption thresholds, deduction rule matching, OCR lifecycle, and demand letter generation for numeric safety, ReDoS immunity, and zero network egress."
+
+    - path: "src/components/**"
+      instructions: "Audit React components for accessible UI controls (WCAG AA), screen reader announcements, secure input handling, HTML escaping, and nuclear amnesia data burning."
+
+    - path: "policies/**"
+      instructions: "Audit statutory wage policy packs and schema conformance across federal and state jurisdictions."
+
+    - path: "tests/**"
+      instructions: "Audit test suites for edge-case coverage (empty texts, negative figures, OCR worker disposal, ReDoS immunity, and claims parity)."
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: "auto"
+  linked_repositories:
+    - repository: "knowthankyew/privacy-telemetry"
+      instructions: "Contains canonical zero-egress invariants, cryptographic evidence sealing standards, and privacy schemas for the KnowThankYew suite."
+    - repository: "knowthankyew/portfolio-admin"
+      instructions: "Contains portfolio integration standards, Master Brief assertions, and administrative compliance specifications."

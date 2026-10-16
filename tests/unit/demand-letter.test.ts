@@ -59,4 +59,30 @@ describe('Demand Letter Generator', () => {
     expect(letter).toContain('M.G.L. c. 149');
     expect(letter).toContain('Massachusetts');
   });
+
+  it('resilience: handles empty formData and missing worker fields with fallback defaults', () => {
+    const analysis = analyzePaystubText('', 'CA');
+    const letter = generateDemandLetter(
+      {
+        workerName: '',
+        workerAddress: '',
+        workerPhoneEmail: '',
+        employerName: '',
+        employerAddress: '',
+        jobTitle: '',
+        startDate: '',
+        endDate: '',
+        stateCode: 'CA',
+        unpaidOvertimeAmount: '',
+        unlawfulDeductionAmount: '',
+        demandedRemedy: '',
+      },
+      analysis
+    );
+
+    expect(letter).toContain('[Your Full Name]');
+    expect(letter).toContain('[Employer Company Name]');
+    expect(letter).toContain('[Your Contact Info]');
+    expect(letter).toContain('29 U.S.C. § 216(b)');
+  });
 });

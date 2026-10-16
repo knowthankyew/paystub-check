@@ -13,6 +13,7 @@ import { analyzePaystubText } from './legal/parser';
 import { SamplePaystub, LegalAnalysisResult } from './legal/types';
 import { SAMPLE_PAYSTUBS } from './legal/samplePaystubs';
 import { telemetry } from './legal/telemetry';
+import { terminateOcrWorker } from './legal/ocr';
 import { DollarSign, Download, Lock, AlertTriangle } from 'lucide-react';
 
 export function App() {
@@ -33,14 +34,12 @@ export function App() {
     telemetry.recordAuditEvent('document_ingested', `Ingested wage statement (${inputText.length} chars)`, { state: selectedState });
     const result = analyzePaystubText(inputText, selectedState);
     telemetry.recordAuditEvent('rules_evaluated', `Evaluated paystub against ${result.stateRuleInfo.stateName} & FLSA wage laws`, {
-      gross_pay: result.extractedPay.grossPay,
-      net_pay: result.extractedPay.netPay,
+      state: selectedState,
       redflag_count: result.redFlags.length,
       is_compliant: result.redFlags.length === 0,
     });
     span.end('OK', {
-      gross_pay: result.extractedPay.grossPay,
-      net_pay: result.extractedPay.netPay,
+      state: selectedState,
       redflag_count: result.redFlags.length,
       is_compliant: result.redFlags.length === 0,
     });
@@ -56,14 +55,12 @@ export function App() {
     telemetry.recordAuditEvent('document_ingested', `Loaded preset: ${sample.title}`, { state: selectedState });
     const result = analyzePaystubText(sample.text, selectedState);
     telemetry.recordAuditEvent('rules_evaluated', `Evaluated paystub against ${result.stateRuleInfo.stateName} & FLSA wage laws`, {
-      gross_pay: result.extractedPay.grossPay,
-      net_pay: result.extractedPay.netPay,
+      state: selectedState,
       redflag_count: result.redFlags.length,
       is_compliant: result.redFlags.length === 0,
     });
     span.end('OK', {
-      gross_pay: result.extractedPay.grossPay,
-      net_pay: result.extractedPay.netPay,
+      state: selectedState,
       redflag_count: result.redFlags.length,
       is_compliant: result.redFlags.length === 0,
     });
@@ -78,8 +75,7 @@ export function App() {
       const span = telemetry.startSpan('analyze_paystub', { state: newState, char_count: inputText.length });
       const result = analyzePaystubText(inputText, newState);
       span.end('OK', {
-        gross_pay: result.extractedPay.grossPay,
-        net_pay: result.extractedPay.netPay,
+        state: newState,
         redflag_count: result.redFlags.length,
         is_compliant: result.redFlags.length === 0,
       });
@@ -94,7 +90,26 @@ export function App() {
   };
 
   const handleBurnData = () => {
+    terminateOcrWorker().catch(() => {});
     telemetry.burn();
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        window.caches.keys().then((keys) => {
+          keys.forEach((k) => window.caches.delete(k));
+        });
+      }
+      if (typeof window !== 'undefined' && 'indexedDB' in window && typeof indexedDB.databases === 'function') {
+        indexedDB.databases().then((dbs) => {
+          for (const db of dbs) {
+            if (db.name) indexedDB.deleteDatabase(db.name);
+          }
+        });
+      }
+    } catch {
+      // storage clear best-effort in sandbox/isolated environments
+    }
     setAnalysisResult(null);
     setInputText('');
     setActiveTab('overview');

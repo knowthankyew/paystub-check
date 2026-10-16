@@ -39,7 +39,9 @@ export const DemandLetterGenerator: React.FC<DemandLetterGeneratorProps> = ({ an
       const safeText = letterText
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 
       printWindow.document.write(`
         <!DOCTYPE html>

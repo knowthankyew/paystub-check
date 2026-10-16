@@ -5,6 +5,19 @@ export interface OCRProgress {
   progress: number;
 }
 
+let activeWorker: any = null;
+
+export async function terminateOcrWorker(): Promise<void> {
+  if (activeWorker) {
+    try {
+      await activeWorker.terminate();
+    } catch {
+      // Ignore worker cleanup error
+    }
+    activeWorker = null;
+  }
+}
+
 export async function performClientSideOCR(
   imageFile: File | Blob,
   onProgress?: (progress: OCRProgress) => void
@@ -33,6 +46,7 @@ export async function performClientSideOCR(
         }
       }
     });
+    activeWorker = worker;
 
     if (onProgress) {
       onProgress({ status: 'Processing document image...', progress: 0.3 });
@@ -40,6 +54,7 @@ export async function performClientSideOCR(
 
     const ret = await worker.recognize(imageFile);
     await worker.terminate();
+    activeWorker = null;
 
     if (onProgress) {
       onProgress({ status: 'OCR Complete!', progress: 1.0 });
@@ -53,6 +68,7 @@ export async function performClientSideOCR(
       } catch (e) {
         // Ignore worker cleanup error
       }
+      activeWorker = null;
     }
     throw new Error(error instanceof Error ? error.message : 'OCR Recognition failed.');
   }

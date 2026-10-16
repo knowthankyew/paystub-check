@@ -54,4 +54,9 @@ describe('FLSA Legal Thresholds & Rules', () => {
     expect(otRule?.pattern.test('Overtime at straight time')).toBe(true);
     expect(otRule?.pattern.test('Flat rate overtime applied')).toBe(true);
   });
+
+  it('verifies terminateOcrWorker executes cleanly without unhandled rejection', async () => {
+    const { terminateOcrWorker } = await import('../../src/legal/ocr');
+    await expect(terminateOcrWorker()).resolves.toBeUndefined();
+  });
 });
