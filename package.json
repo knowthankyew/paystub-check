@@ -15,7 +15,7 @@
     "record:demo": "bash scripts/record-demo.sh"
   },
   "dependencies": {
-    "@knowthankyew/policy-packs": "file:../policy-packs",
+    "@knowthankyew/policy-packs": "^1.0.1",
     "@knowthankyew/privacy-telemetry": "file:../privacy-telemetry/packages/privacy-telemetry",
     "lucide-react": "^1.46.0",
     "react": "^18.2.0",
