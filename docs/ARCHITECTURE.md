@@ -1,6 +1,6 @@
 <!-- diagram-meta
   last-validated: 2026-10-26
-  validated-commit: 23dd3b0
+  validated-commit: 7ff28fe
   covers: [src/**]
   generated-by: manual
 -->
