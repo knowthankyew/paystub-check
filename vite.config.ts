@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],
+  resolve: { dedupe: ['react', 'react-dom'] },
   server: {
     port: 3000,
     open: false

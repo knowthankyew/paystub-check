@@ -10,7 +10,6 @@ export const HandoffBanner: React.FC<HandoffBannerProps> = ({ payload, onClear }
   return (
     <div
       role="status"
-      aria-live="polite"
       className="handoff-banner"
       style={{
         background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.12) 0%, rgba(15, 23, 42, 0.95) 100%)',

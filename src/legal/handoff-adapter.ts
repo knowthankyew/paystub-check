@@ -10,7 +10,7 @@ export function mapHandoffToPaystubAnalysis(
   payload: KtyHandoffPayload,
   stateCode = 'CA'
 ): LegalAnalysisResult {
-  const redFlags: WageRedFlag[] = payload.findings.map((f, idx) => {
+  const redFlags: WageRedFlag[] = (payload.findings || []).map((f, idx) => {
     let severity: SeverityLevel = 'caution';
     let enforceability: 'Statutory Violation (Illegal)' | 'High Misclassification Risk' | 'Verification Needed' = 'Verification Needed';
     if (f.severity === 'CRITICAL') {
@@ -21,36 +21,42 @@ export function mapHandoffToPaystubAnalysis(
       enforceability = 'High Misclassification Risk';
     }
 
+    const ruleKey = typeof f.ruleId === 'string' && f.ruleId.trim() ? f.ruleId.trim() : 'item';
     return {
-      id: `handoff-wage-${f.ruleId || idx + 1}`,
-      quote: f.matchedSnippet || f.title,
-      title: f.title,
+      id: `handoff-wage-${ruleKey}-${idx}`,
+      quote: f.matchedSnippet || f.title || 'Extracted statement finding',
+      title: f.title || 'Unspecified Finding',
       severity,
-      statute: f.statuteCode,
-      lawName: f.statuteTitle,
-      explanation: f.explanation,
+      statute: f.statuteCode || 'Statutory Labor Standard',
+      lawName: f.statuteTitle || 'Labor Code Compliance',
+      explanation: f.explanation || 'Statutory review required under applicable wage laws.',
       enforceability,
-      workerAdvice: f.recommendation,
+      workerAdvice: f.recommendation || 'Consult your state labor commissioner or wage advocate.',
     };
   });
 
   const stateRuleInfo = getStateWageRule(stateCode);
   const unlawfulCount = redFlags.filter((r) => r.severity === 'unlawful').length;
-  const complianceScore = Math.max(0, Math.min(100, Math.round(100 - (payload.riskScore || 0))));
+  const rawScore = Number.isFinite(payload.riskScore) ? payload.riskScore : 0;
+  const complianceScore = Math.max(0, Math.min(100, Math.round(100 - rawScore)));
 
-  const hasOvertimeViolation = payload.findings.some(
-    (f) => f.ruleId?.includes('OVERTIME') || /overtime|off-the-clock|working\s+off\s+the\s+clock/i.test(`${f.title} ${f.matchedSnippet}`)
+  const hasOvertimeViolation = (payload.findings || []).some(
+    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('OVERTIME')) || /\bovertime\b|\boff-the-clock\b|\bworking\s+off\s+the\s+clock\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
   );
-  const hasIllegalShortageDeduction = payload.findings.some(
-    (f) => f.ruleId?.includes('DEDUCT') || /shortage|cash\s+drawer|till|uniform\s+deduction/i.test(`${f.title} ${f.matchedSnippet}`)
+  const hasIllegalShortageDeduction = (payload.findings || []).some(
+    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('DEDUCT')) || /\bshortage\b|\bcash\s+drawer\b|\btill\b|\buniform\s+deduction\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
+  );
+
+  const hasMisclassificationFinding = (payload.findings || []).some(
+    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('MISCLASS')) || /\bmisclassif|\bindependent\s+contractor\b|\b1099\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
   );
 
   return {
     documentType: 'Offer Letter / Contract',
     stateCode,
     complianceScore,
-    summary: `Live Reality Engine analysis for ${payload.domain}. Extracted ${payload.findings.length} findings with ${unlawfulCount} potential wage theft or misclassification violations under FLSA and ${stateRuleInfo.stateName} labor standards.`,
-    classificationType: unlawfulCount > 0 ? 'Salaried Non-Exempt (Misclassified)' : 'Hourly Non-Exempt',
+    summary: `Live Reality Engine analysis for ${payload.domain || 'submitted document'}. Extracted ${redFlags.length} findings with ${unlawfulCount} potential wage theft or misclassification violations under FLSA and ${stateRuleInfo.stateName} labor standards.`,
+    classificationType: hasMisclassificationFinding ? 'Salaried Non-Exempt (Misclassified)' : 'Hourly Non-Exempt',
     extractedPay: {
       grossPay: 0,
       netPay: 0,
@@ -63,13 +69,13 @@ export function mapHandoffToPaystubAnalysis(
     redFlags,
     deductionsList: [],
     flsaCompliance: {
-      isExemptThresholdMet: true,
-      applicableSalaryThreshold: stateRuleInfo.exemptionSalaryThreshold || 35568,
+      isExemptThresholdMet: false,
+      applicableSalaryThreshold: stateRuleInfo.exemptionSalaryThreshold || 35568, // FLSA baseline ($684/wk = $35,568/yr)
       hasOvertimeViolation,
       hasIllegalShortageDeduction,
       hasFicaMathMismatch: false,
     },
     stateRuleInfo,
-    rawText: payload.findings.map((f) => `[${f.title}]: ${f.matchedSnippet}`).join('\n\n'),
+    rawText: (payload.findings || []).map((f) => `[${f.title || 'Finding'}]: ${f.matchedSnippet || ''}`).join('\n\n'),
   };
 }
