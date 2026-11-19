@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { generateDemandLetter } from '../../src/legal/demandLetter';
 import { analyzePaystubText } from '../../src/legal/parser';
 import { SAMPLE_PAYSTUBS } from '../../src/legal/samplePaystubs';
+import type { DemandLetterData } from '../../src/legal/types';
 
 describe('Demand Letter Generator', () => {
   it('generates a formal notice of wage claim citing FLSA 29 U.S.C. § 216(b)', () => {
@@ -75,7 +76,7 @@ describe('Demand Letter Generator', () => {
         stateCode: 'CA',
         unpaidOvertimeAmount: '',
         unlawfulDeductionAmount: '',
-        demandedRemedy: '',
+        demandedRemedy: '' as DemandLetterData['demandedRemedy'],
       },
       analysis
     );
@@ -84,5 +85,37 @@ describe('Demand Letter Generator', () => {
     expect(letter).toContain('[Employer Company Name]');
     expect(letter).toContain('[Your Contact Info]');
     expect(letter).toContain('29 U.S.C. § 216(b)');
+  });
+
+  it('omits salary-threshold violation assertions when isExemptThresholdMet is null (unextracted handoff)', () => {
+    const analysis = analyzePaystubText('Standard wage statement without salary figure', 'CA');
+    const handoffLikeAnalysis = {
+      ...analysis,
+      flsaCompliance: {
+        ...analysis.flsaCompliance,
+        isExemptThresholdMet: null,
+      },
+    };
+
+    const letter = generateDemandLetter(
+      {
+        workerName: 'Taylor Lee',
+        workerAddress: '100 Main St',
+        workerPhoneEmail: 'taylor@example.com',
+        employerName: 'Acme Corp',
+        employerAddress: '200 Commerce Way',
+        jobTitle: 'Coordinator',
+        startDate: 'January 2026',
+        endDate: 'Present',
+        stateCode: 'CA',
+        unpaidOvertimeAmount: '$0.00',
+        unlawfulDeductionAmount: '$0.00',
+        demandedRemedy: 'Full Back Pay + 100% Liquidated Damages',
+      },
+      handoffLikeAnalysis
+    );
+
+    expect(letter).not.toContain('Statutory Salary Exemption Threshold');
+    expect(letter).not.toContain('Federal FLSA Minimum Salary Exemption Threshold');
   });
 });

@@ -18,7 +18,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({ analysis, onClose }) =
 **State Jurisdiction**: ${analysis.stateRuleInfo.stateName} (${analysis.stateCode})
 **Wage Compliance Score**: ${analysis.complianceScore} / 100
 **Classification Type**: ${analysis.classificationType}
-**Calculated Annual Salary**: $${analysis.extractedPay.calculatedAnnualSalary.toLocaleString()}
+**Calculated Annual Salary**: ${analysis.extractedPay.calculatedAnnualSalary != null && analysis.extractedPay.calculatedAnnualSalary > 0 ? `$${analysis.extractedPay.calculatedAnnualSalary.toLocaleString()}` : 'Not Extracted'}
 
 ---
 
@@ -51,7 +51,7 @@ ${analysis.redFlags.map((rf, idx) => `
 ## FLSA Compliance Checklist
 - **29 U.S.C. § 207 Overtime**: ${analysis.flsaCompliance.hasOvertimeViolation ? 'NON-COMPLIANT (Overtime multiplier missing)' : 'COMPLIANT'}
 - **29 C.F.R. § 531.35 Deductions**: ${analysis.flsaCompliance.hasIllegalShortageDeduction ? 'NON-COMPLIANT (Unlawful till/uniform deduction found)' : 'COMPLIANT'}
-- **Salary Basis Exemption Threshold**: ${analysis.flsaCompliance.isExemptThresholdMet ? `EXCEEDS $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})` : `BELOW $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})`}
+- **Salary Basis Exemption Threshold**: ${analysis.flsaCompliance.isExemptThresholdMet === null ? `UNDETERMINED (salary not extracted; governing threshold: $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr in ${analysis.stateRuleInfo.stateCode})` : analysis.flsaCompliance.isExemptThresholdMet ? `EXCEEDS $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})` : `BELOW $${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr threshold (${analysis.stateRuleInfo.stateCode})`}
 
 ---
 

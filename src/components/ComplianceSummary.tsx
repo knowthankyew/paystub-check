@@ -98,7 +98,9 @@ export const ComplianceSummary: React.FC<ComplianceSummaryProps> = ({ result }) 
               <span>Annualized Est.</span>
             </div>
             <div className="text-xs font-bold text-slate-200 mt-1">
-              ${extractedPay.calculatedAnnualSalary > 0 ? extractedPay.calculatedAnnualSalary.toLocaleString() : 'N/A'}
+              {extractedPay.calculatedAnnualSalary != null && extractedPay.calculatedAnnualSalary > 0
+                ? `$${extractedPay.calculatedAnnualSalary.toLocaleString()}`
+                : 'Not Extracted'}
             </div>
           </div>
 
@@ -158,17 +160,21 @@ export const ComplianceSummary: React.FC<ComplianceSummaryProps> = ({ result }) 
         </div>
 
         <div className="flex items-center space-x-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800">
-          {flsaCompliance.isExemptThresholdMet ? (
+          {flsaCompliance.isExemptThresholdMet === true ? (
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          ) : flsaCompliance.isExemptThresholdMet === null ? (
+            <AlertTriangle className="w-5 h-5 text-slate-400 flex-shrink-0" />
           ) : (
             <XCircle className="w-5 h-5 text-amber-400 flex-shrink-0" />
           )}
           <div>
             <div className="text-xs font-semibold text-slate-200">Exemption Salary Basis ({stateRuleInfo.stateCode})</div>
             <div className="text-[11px] text-slate-400">
-              {flsaCompliance.isExemptThresholdMet
-                ? `Meets $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`
-                : `Under $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`}
+              {flsaCompliance.isExemptThresholdMet === null
+                ? 'Undetermined (Salary Not Extracted)'
+                : flsaCompliance.isExemptThresholdMet
+                  ? `Meets $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`
+                  : `Under $${flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr Threshold`}
             </div>
           </div>
         </div>

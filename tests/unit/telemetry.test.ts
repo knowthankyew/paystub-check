@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { TelemetryManager } from '../../src/legal/telemetry';
+import { runTelemetryInFreshRealm } from './realm-worker.mjs';
 
 describe('PaystubCheck TelemetryManager & Privacy Invariants', () => {
   let tm: TelemetryManager;
@@ -55,34 +56,47 @@ describe('PaystubCheck TelemetryManager & Privacy Invariants', () => {
     expect(attrs.state).toBe('NY');
     expect(attrs.overtime_hours).toBe(10);
 
-    // Sensitive financial and personal keys are strictly redacted by default
-    expect(attrs.gross_pay).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
-    expect(attrs.net_pay).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
-    expect(attrs.employee_name).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
-    expect(attrs.ssn).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
-    expect(attrs.paystub_text).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
-    expect(attrs.matchedText).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
+    // Sensitive financial and personal keys are strictly redacted by default without retaining key names
+    expect('gross_pay' in attrs).toBe(false);
+    expect('net_pay' in attrs).toBe(false);
+    expect('employee_name' in attrs).toBe(false);
+    expect('ssn' in attrs).toBe(false);
+    expect('paystub_text' in attrs).toBe(false);
+    expect('matchedText' in attrs).toBe(false);
+    expect(attrs['[REDACTED_KEY]']).toBe('[REDACTED_BY_DEFAULT_ALLOWLIST]');
   });
 
-  it('purges all in-memory spans and session audit logs upon burn()', () => {
-    const span = tm.startSpan('parse_wage_statement', { state: 'CA' });
-    span.end('OK');
+  it('purges all in-memory spans and session audit logs upon burn()', async () => {
+    await runTelemetryInFreshRealm(`
+      const { TelemetryManager: IsolatedTelemetryManager } = telemetryMod;
+      const isolatedTm = new IsolatedTelemetryManager({
+        mode: 'memory_only',
+        otlpEndpoint: null,
+        burnEnabled: true,
+        allowRawPayloads: false,
+        auditDurable: false,
+        networkEgress: 'deny',
+      });
 
-    tm.recordAuditEvent('document_ingested', 'Ingested paystub', { state: 'CA' });
+      const span = isolatedTm.startSpan('parse_wage_statement', { state: 'CA' });
+      span.end('OK');
 
-    expect(tm.getMemorySpans().length).toBe(1);
-    expect(tm.getAuditLog().length).toBe(1);
+      isolatedTm.recordAuditEvent('document_ingested', 'Ingested paystub', { state: 'CA' });
 
-    // Invoke Burn Local Data
-    tm.burn();
+      assert.equal(isolatedTm.getMemorySpans().length, 1);
+      assert.equal(isolatedTm.getAuditLog().length, 1);
 
-    expect(tm.getMemorySpans().length).toBe(0);
-    expect(tm.getAuditLog().length).toBe(0);
+      // Invoke Burn Local Data
+      isolatedTm.burn();
 
-    // Subsequent span attempts remain no-op until restart
-    const spanAfterBurn = tm.startSpan('post_burn_op', { count: 1 });
-    spanAfterBurn.end('OK');
-    expect(tm.getMemorySpans().length).toBe(0);
+      assert.equal(isolatedTm.getMemorySpans().length, 0);
+      assert.equal(isolatedTm.getAuditLog().length, 0);
+
+      // Subsequent span attempts remain permanently no-op within this burned JS realm
+      const spanAfterBurn = isolatedTm.startSpan('post_burn_op', { count: 1 });
+      spanAfterBurn.end('OK');
+      assert.equal(isolatedTm.getMemorySpans().length, 0);
+    `);
   });
 
   it('generates downloadable session audit JSON', () => {

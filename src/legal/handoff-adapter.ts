@@ -3,14 +3,17 @@ import { LegalAnalysisResult, WageRedFlag, SeverityLevel } from './types';
 import { getStateWageRule } from './stateWageLaws';
 
 /**
- * Transforms an incoming KnowThankYew handoff payload into a fully-grounded
- * LegalAnalysisResult, bypassing manual document intake and dropzones.
+ * Transforms an incoming KnowThankYew handoff payload into a LegalAnalysisResult
+ * without fabricating unextracted pay figures, document categories, or legal classifications.
  */
 export function mapHandoffToPaystubAnalysis(
   payload: KtyHandoffPayload,
-  stateCode = 'CA'
+  stateCode = 'DEFAULT'
 ): LegalAnalysisResult {
-  const redFlags: WageRedFlag[] = (payload.findings || []).map((f, idx) => {
+  const resolvedStateCode = stateCode.trim() || 'DEFAULT';
+  const findings = Array.isArray(payload.findings) ? payload.findings : [];
+
+  const redFlags: WageRedFlag[] = findings.map((f, idx) => {
     let severity: SeverityLevel = 'caution';
     let enforceability: 'Statutory Violation (Illegal)' | 'High Misclassification Risk' | 'Verification Needed' = 'Verification Needed';
     if (f.severity === 'CRITICAL') {
@@ -35,47 +38,82 @@ export function mapHandoffToPaystubAnalysis(
     };
   });
 
-  const stateRuleInfo = getStateWageRule(stateCode);
+  const stateRuleInfo = getStateWageRule(resolvedStateCode);
   const unlawfulCount = redFlags.filter((r) => r.severity === 'unlawful').length;
   const rawScore = Number.isFinite(payload.riskScore) ? payload.riskScore : 0;
   const complianceScore = Math.max(0, Math.min(100, Math.round(100 - rawScore)));
 
-  const hasOvertimeViolation = (payload.findings || []).some(
-    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('OVERTIME')) || /\bovertime\b|\boff-the-clock\b|\bworking\s+off\s+the\s+clock\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
+  const hasOvertimeViolation = findings.some(
+    (f) =>
+      (typeof f.ruleId === 'string' && f.ruleId.includes('OVERTIME')) ||
+      /\bovertime\b|\boff-the-clock\b|\bworking\s+off\s+the\s+clock\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
   );
-  const hasIllegalShortageDeduction = (payload.findings || []).some(
-    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('DEDUCT')) || /\bshortage\b|\bcash\s+drawer\b|\btill\b|\buniform\s+deduction\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
+  const hasIllegalShortageDeduction = findings.some(
+    (f) =>
+      (typeof f.ruleId === 'string' && f.ruleId.includes('DEDUCT')) ||
+      /\bshortage\b|\bcash\s+drawer\b|\btill\b|\buniform\s+deduction\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
   );
 
-  const hasMisclassificationFinding = (payload.findings || []).some(
-    (f) => (typeof f.ruleId === 'string' && f.ruleId.includes('MISCLASS')) || /\bmisclassif|\bindependent\s+contractor\b|\b1099\b/i.test(`${f.title || ''} ${f.matchedSnippet || ''}`)
+  const hasContractorMisclassification = findings.some(
+    (f) =>
+      (typeof f.ruleId === 'string' && (f.ruleId.includes('1099') || f.ruleId.includes('CONTRACTOR'))) ||
+      /\bindependent\s+contractor\b|\b1099\b|\bmisclassif\w*\s+as\s+(?:an?\s+)?contractor\b/i.test(
+        `${f.title || ''} ${f.matchedSnippet || ''}`
+      )
   );
+  const hasSalariedMisclassification = findings.some((f) => {
+    const normalizedRuleId = typeof f.ruleId === 'string' ? f.ruleId.toUpperCase() : '';
+    const hasMisclassRule =
+      /(?:^|[_-])(?:SALARY|SALARIED)[_-](?:EXEMPT|MISCLASS)/.test(normalizedRuleId) ||
+      /(?:^|[_-])EXEMPT(?:ION)?[_-]THRESHOLD/.test(normalizedRuleId);
+    const text = `${f.title || ''} ${f.matchedSnippet || ''}`;
+    const hasExplicitSalariedMisclass =
+      /\bsalaried\b[^.\n]{0,40}\bmisclassif|\bmisclassif\w*\s+as\s+(?:salaried|exempt)\b|\bbelow\s+(?:the\s+)?(?:salary|exemption)\s+threshold\b|\bsalary\s+basis\s+(?:violation|fail|below|under)\b/i.test(
+        text
+      );
+    return hasMisclassRule || hasExplicitSalariedMisclass;
+  });
+
+  let classificationType: LegalAnalysisResult['classificationType'] = 'Undetermined';
+  if (hasContractorMisclassification && !hasSalariedMisclassification) {
+    classificationType = 'Contractor / 1099';
+  } else if (hasSalariedMisclassification && !hasContractorMisclassification) {
+    classificationType = 'Salaried Non-Exempt (Misclassified)';
+  }
+
+  let documentType: LegalAnalysisResult['documentType'] = 'Undetermined';
+  const combinedText = findings.map((f) => `${f.title || ''} ${f.matchedSnippet || ''}`).join(' ');
+  if (/\boffer\s+letter\b|\bemployment\s+(?:agreement|contract)\b/i.test(combinedText)) {
+    documentType = 'Offer Letter / Contract';
+  } else if (/\bpay\s*stub\b|\bwage\s+statement\b|\bpay\s+period\b/i.test(combinedText)) {
+    documentType = 'Wage Statement';
+  }
 
   return {
-    documentType: 'Offer Letter / Contract',
-    stateCode,
+    documentType,
+    stateCode: resolvedStateCode,
     complianceScore,
-    summary: `Live Reality Engine analysis for ${payload.domain || 'submitted document'}. Extracted ${redFlags.length} findings with ${unlawfulCount} potential wage theft or misclassification violations under FLSA and ${stateRuleInfo.stateName} labor standards.`,
-    classificationType: hasMisclassificationFinding ? 'Salaried Non-Exempt (Misclassified)' : 'Hourly Non-Exempt',
+    summary: `Live Reality Engine analysis for ${payload.domain || 'submitted document'}. Extracted ${redFlags.length} finding(s) with ${unlawfulCount} potential statutory violation(s) under FLSA and ${stateRuleInfo.stateName} labor standards. Pay figures were not extracted from web handoff findings.`,
+    classificationType,
     extractedPay: {
-      grossPay: 0,
-      netPay: 0,
-      hourlyRate: stateRuleInfo.minimumWageRate,
-      hoursWorked: 40,
-      overtimeHours: 0,
-      payFrequency: 'Bi-Weekly',
-      calculatedAnnualSalary: stateRuleInfo.minimumWageRate * 2080,
+      grossPay: null,
+      netPay: null,
+      hourlyRate: null,
+      hoursWorked: null,
+      overtimeHours: null,
+      payFrequency: 'Unknown',
+      calculatedAnnualSalary: null,
     },
     redFlags,
     deductionsList: [],
     flsaCompliance: {
-      isExemptThresholdMet: false,
-      applicableSalaryThreshold: stateRuleInfo.exemptionSalaryThreshold || 35568, // FLSA baseline ($684/wk = $35,568/yr)
+      isExemptThresholdMet: null,
+      applicableSalaryThreshold: stateRuleInfo.exemptionSalaryThreshold || 35568,
       hasOvertimeViolation,
       hasIllegalShortageDeduction,
       hasFicaMathMismatch: false,
     },
     stateRuleInfo,
-    rawText: (payload.findings || []).map((f) => `[${f.title || 'Finding'}]: ${f.matchedSnippet || ''}`).join('\n\n'),
+    rawText: findings.map((f) => `[${f.title}]: ${f.matchedSnippet}`).join('\n\n'),
   };
 }

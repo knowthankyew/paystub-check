@@ -24,7 +24,7 @@ export function generateDemandLetter(
   if (analysis.flsaCompliance.hasIllegalShortageDeduction) {
     statutoryReferences += `\n- 29 C.F.R. § 531.35 & State Labor Code Prohibitions on Cash Register Shortages / Uniform Deductions.`;
   }
-  if (!analysis.flsaCompliance.isExemptThresholdMet) {
+  if (analysis.flsaCompliance.isExemptThresholdMet === false) {
     const isStateOverride = stateRule.exemptionSalaryThreshold && stateRule.exemptionSalaryThreshold > 35568;
     if (isStateOverride) {
       statutoryReferences += `\n- ${stateRule.stateName} Statutory Salary Exemption Threshold ($${analysis.flsaCompliance.applicableSalaryThreshold.toLocaleString()}/yr under ${stateRule.statuteRef}).`;
@@ -87,7 +87,7 @@ Pursuant to federal law (29 U.S.C. § 216(b)) and ${stateRule.stateName} labor s
 
 DEMANDED REMEDY: ${data.demandedRemedy || "Full Back Pay + 100% Liquidated Damages"}
 
-Please be advised that under 29 U.S.C. § 216(b) of the FLSA, employers who fail to pay mandatory minimum wages or overtime are statutorily liable for 100% liquidated damages (double damages), as well as mandatory 100% reasonable attorney fees and court costs. In states like Massachusetts (M.G.L. c. 149 § 148), state law mandates automatic treble damages (3x).
+Please be advised that under 29 U.S.C. § 216(b) of the FLSA, employers who fail to pay mandatory minimum wages or overtime are statutorily liable for 100% liquidated damages (double damages), as well as mandatory 100% reasonable attorney fees and court costs. In states like Massachusetts (M.G.L. c. 149 § 150), state law mandates automatic treble damages (3x).
 
 Please contact me at the phone number or email address provided above within 14 days to confirm payment arrangements.
 

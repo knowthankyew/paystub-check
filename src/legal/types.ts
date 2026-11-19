@@ -32,29 +32,29 @@ export interface StateWageRule {
   hasStateDisabilityTax: boolean;
   stateTaxName?: string;
   waitingTimePenaltyDays?: number; // e.g. up to 30 days in CA § 203
-  statutoryDamagesMultiplier?: string; // e.g. Treble damages in MA c. 149 § 148
+  statutoryDamagesMultiplier?: string; // e.g. Treble damages in MA c. 149 § 150
   specialRules: string[];
 }
 
 export interface LegalAnalysisResult {
-  documentType: "Pay Stub" | "Offer Letter / Contract" | "Wage Statement";
+  documentType: "Pay Stub" | "Offer Letter / Contract" | "Wage Statement" | "Undetermined";
   stateCode: string;
   complianceScore: number; // 0 - 100
   summary: string;
-  classificationType: "Hourly Non-Exempt" | "Salaried Exempt" | "Salaried Non-Exempt (Misclassified)" | "Contractor / 1099";
+  classificationType: "Hourly Non-Exempt" | "Salaried Exempt" | "Salaried Non-Exempt (Misclassified)" | "Contractor / 1099" | "Undetermined";
   extractedPay: {
-    grossPay: number;
-    netPay: number;
-    hourlyRate?: number;
-    hoursWorked?: number;
-    overtimeHours?: number;
-    payFrequency: "Daily" | "Weekly" | "Bi-Weekly" | "Semi-Monthly" | "Monthly" | "Annual Salary";
-    calculatedAnnualSalary: number;
+    grossPay: number | null;
+    netPay: number | null;
+    hourlyRate?: number | null;
+    hoursWorked?: number | null;
+    overtimeHours?: number | null;
+    payFrequency: "Daily" | "Weekly" | "Bi-Weekly" | "Semi-Monthly" | "Monthly" | "Annual Salary" | "Unknown";
+    calculatedAnnualSalary: number | null;
   };
   redFlags: WageRedFlag[];
   deductionsList: DeductionLineItem[];
   flsaCompliance: {
-    isExemptThresholdMet: boolean;
+    isExemptThresholdMet: boolean | null;
     applicableSalaryThreshold: number;
     hasOvertimeViolation: boolean;
     hasIllegalShortageDeduction: boolean;

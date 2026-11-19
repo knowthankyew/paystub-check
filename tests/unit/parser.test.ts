@@ -85,8 +85,10 @@ Net Pay: $2,364.52
       FICA: $-25.00
     `;
     const result = analyzePaystubText(malformedText, 'TX');
-    expect(isNaN(result.extractedPay.grossPay)).toBe(false);
-    expect(isNaN(result.extractedPay.netPay)).toBe(false);
+    expect(result.extractedPay.grossPay).not.toBeNull();
+    expect(result.extractedPay.netPay).not.toBeNull();
+    expect(Number.isNaN(result.extractedPay.grossPay)).toBe(false);
+    expect(Number.isNaN(result.extractedPay.netPay)).toBe(false);
     expect(result.extractedPay.grossPay).toBeGreaterThanOrEqual(0);
     expect(result.extractedPay.netPay).toBeGreaterThanOrEqual(0);
   });

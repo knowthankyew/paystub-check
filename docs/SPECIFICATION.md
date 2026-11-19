@@ -53,7 +53,7 @@
    - **29 U.S.C. § 207 (Overtime Math)**: Regular rate of pay math rules and 1.5x overtime requirements after 40 hours/week.
 
 2. **`stateWageLaws.ts`**:
-   - Structured dataset for 50 US States + DC detailing state minimum wage rates, daily overtime rules (CA, NV, AK require 1.5x after 8 hrs/day; CA 2x after 12 hrs/day), state-mandated pay stub disclosure requirements, waiting time penalties (e.g. CA Lab. Code § 203), and statutory damages (e.g. MA M.G.L. c. 149 § 148 treble damages).
+   - Structured dataset for 50 US States + DC detailing state minimum wage rates, daily overtime rules (CA, NV, AK require 1.5x after 8 hrs/day; CA 2x after 12 hrs/day), state-mandated pay stub disclosure requirements, waiting time penalties (e.g. CA Lab. Code § 203), and statutory damages (e.g. MA M.G.L. c. 149 §§ 148, 150 treble damages).
 
 3. **`parser.ts`**:
    - Regular expression pattern matchers & keyword distance analyzers to score overall Wage Compliance (0–100), extract active pay terms, and flag enforceable vs. illegal terms.

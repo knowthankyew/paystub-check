@@ -32,7 +32,9 @@ export const PayBreakdown: React.FC<PayBreakdownProps> = ({ analysis }) => {
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">Gross Pay</div>
           <div className="text-lg font-bold text-emerald-400 mt-1">
-            ${extractedPay.grossPay > 0 ? extractedPay.grossPay.toFixed(2) : 'Unspecified'}
+            {extractedPay.grossPay != null && extractedPay.grossPay > 0
+              ? `$${extractedPay.grossPay.toFixed(2)}`
+              : 'Not Extracted'}
           </div>
           <div className="text-[11px] text-slate-400 mt-1">Frequency: {extractedPay.payFrequency}</div>
         </div>
@@ -40,15 +42,21 @@ export const PayBreakdown: React.FC<PayBreakdownProps> = ({ analysis }) => {
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">Regular Rate of Pay</div>
           <div className="text-lg font-bold text-slate-100 mt-1">
-            {extractedPay.hourlyRate ? `$${extractedPay.hourlyRate.toFixed(2)}/hr` : 'Salary Basis'}
+            {extractedPay.hourlyRate != null
+              ? `$${extractedPay.hourlyRate.toFixed(2)}/hr`
+              : extractedPay.calculatedAnnualSalary != null && extractedPay.calculatedAnnualSalary > 0
+                ? 'Salary Basis'
+                : 'Not Extracted'}
           </div>
-          <div className="text-[11px] text-slate-400 mt-1">Hours: {extractedPay.hoursWorked || 'N/A'}</div>
+          <div className="text-[11px] text-slate-400 mt-1">
+            Hours: {extractedPay.hoursWorked != null ? extractedPay.hoursWorked : 'Not Extracted'}
+          </div>
         </div>
 
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">Overtime Hours</div>
           <div className={`text-lg font-bold mt-1 ${flsaCompliance.hasOvertimeViolation ? 'text-red-400' : 'text-slate-100'}`}>
-            {extractedPay.overtimeHours ? `${extractedPay.overtimeHours} hrs` : '0 hrs'}
+            {extractedPay.overtimeHours != null ? `${extractedPay.overtimeHours} hrs` : 'Not Extracted'}
           </div>
           <div className="text-[11px] text-slate-400 mt-1">
             {flsaCompliance.hasOvertimeViolation ? '⚠️ Missing 1.5x Pay' : '1.5x Multiplier'}
@@ -58,7 +66,9 @@ export const PayBreakdown: React.FC<PayBreakdownProps> = ({ analysis }) => {
         <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div className="text-xs text-slate-400 font-medium">Net Take-Home Pay</div>
           <div className="text-lg font-bold text-teal-400 mt-1">
-            ${extractedPay.netPay > 0 ? extractedPay.netPay.toFixed(2) : 'Unspecified'}
+            {extractedPay.netPay != null && extractedPay.netPay > 0
+              ? `$${extractedPay.netPay.toFixed(2)}`
+              : 'Not Extracted'}
           </div>
           <div className="text-[11px] text-slate-400 mt-1">After all withholdings</div>
         </div>

@@ -12,7 +12,7 @@
 
 ![PaystubCheck Functionality Demo](demo.gif)
 
-*Watch `demo.mp4` recorded via Playwright to see PaystubCheck audit a salaried misclassification pay stub below FLSA exemption thresholds ($43,888/yr), cross-reference Massachusetts mandatory treble damages (M.G.L. c. 149 § 148), and generate a formal statutory wage claim demand letter.*
+*Watch `demo.mp4` recorded via Playwright to see PaystubCheck audit a salaried misclassification pay stub below governing FLSA exemption thresholds ($684/week / $35,568/yr), cross-reference Massachusetts mandatory treble damages (M.G.L. c. 149 § 150), and generate a formal statutory wage claim demand letter.*
 
 ---
 

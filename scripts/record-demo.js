@@ -151,7 +151,7 @@ async function sleep(ms) {
   });
   await sleep(1200);
 
-  console.log('Step 8: Inspecting Massachusetts Mandatory Treble Damages (M.G.L. c. 149 § 148)...');
+  console.log('Step 8: Inspecting Massachusetts Mandatory Treble Damages (M.G.L. c. 149 § 150)...');
   await page.evaluate(() => {
     const btns = Array.from(document.querySelectorAll('button'));
     const maBtn = btns.find(b => b.textContent && b.textContent.includes('Massachusetts Wage Laws'));
